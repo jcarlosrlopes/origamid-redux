@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+
+   <script src="./redux.js"></script>
+</head>
+<body>
+
+   <h3>Nome: <p id="nome"></p></h3>
+   <h3>Email: <p id="email"></p></h3>
+   <h3>Tempo restante: <p id="tempoRestante"></p></h3>
+   <h3>Aulas completas: <p id="total"></p></h3>  
+
+   <button id="incrementar">Incrementar tempo</button>
+   <button id="reduzir">Reduzir tempo</button>
+
+   <script type="module">
+      import store from './store/configureStore.js';
+      import { incrementarTempo, reduzirTempo, modificarEmail } from './store/aluno.js';
+      import { completarAula, completarCurso, resetarCurso } from './store/aulas.js';
+
+      const btnIncrementar = document.getElementById("incrementar");
+      const btnReduzir = document.getElementById("reduzir");      
+      
+      const render = () => {
+         const nome = document.getElementById("nome");
+         const email = document.getElementById("email");
+         const tempoRestante = document.getElementById("tempoRestante");
+         const total = document.getElementById("total");
+
+         const state = store.getState();
+
+         console.log(state);
+
+         nome.innerHTML = state.alunoReducer.nome;
+         email.innerHTML = state.alunoReducer.email;
+         tempoRestante.innerHTML = state.alunoReducer.diasRestantes;
+
+         const totalAulas = state.aulasReducer.filter(a => a.completa === true).length;
+         total.innerHTML = totalAulas;
+      };
+      
+      render();
+      store.subscribe(render);
+      
+      btnIncrementar.addEventListener("click", () => store.dispatch(incrementarTempo()));
+      btnReduzir.addEventListener("click", () => store.dispatch(reduzirTempo()));
+
+      store.dispatch(modificarEmail("jose@dataprev.com"));
+      store.dispatch(completarAula(2));
+   </script>
+</body>
+</html>
